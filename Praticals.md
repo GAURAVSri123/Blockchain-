@@ -5,7 +5,8 @@ Create a voting system with multiple candidates. Each address can vote only once
 
 
 ## Contract 
-// SPDX-License-Identifier: MIT
+ '''
+ // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 contract VotingSystem {
@@ -29,7 +30,7 @@ contract VotingSystem {
         hasVoted[msg.sender] = true;
     }
 }
-
+'''
 
 ## deployment 
 ![Screenshot 2025-05-19 135807](https://github.com/user-attachments/assets/fb174bc2-c637-48fe-a385-5baf9896aae4)
