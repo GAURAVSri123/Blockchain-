@@ -5,32 +5,53 @@ Create a voting system with multiple candidates. Each address can vote only once
 
 
 ## Contract 
- '''
+ ```
  // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 contract VotingSystem {
-    mapping(address => bool) public hasVoted;
-    mapping(string => uint) public votes;
-    string[] public candidates;
-    constructor(string[] memory _candidates) {
-        candidates = _candidates;
+    struct Candidate {
+        string name;
+        uint voteCount;
     }
-    function vote(string memory _candidate) public {
-        require(!hasVoted[msg.sender], "Already voted!");
-        bool valid = false;
-        for (uint i = 0; i < candidates.length; i++) {
-            if (keccak256(bytes(candidates[i])) == keccak256(bytes(_candidate))) {
-                valid = true;
-                break;
-            }
+    
+    Candidate[] public candidates;
+    mapping(address => bool) public hasVoted;
+    address public owner;
+    
+    constructor(string[] memory _candidateNames) {
+        owner = msg.sender;
+        for(uint i = 0; i < _candidateNames.length; i++) {
+            candidates.push(Candidate({
+                name: _candidateNames[i],
+                voteCount: 0
+            }));
         }
-         require(valid, "Invalid candidate");
-        votes[_candidate]++;
+    }
+    
+    function vote(uint _candidateIndex) public {
+        require(!hasVoted[msg.sender], "You have already voted");
+        require(_candidateIndex < candidates.length, "Invalid candidate");
+        
+        candidates[_candidateIndex].voteCount++;
         hasVoted[msg.sender] = true;
     }
+    
+    function getWinner() public view returns (string memory) {
+        uint winningVoteCount = 0;
+        uint winningIndex = 0;
+        
+        for(uint i = 0; i < candidates.length; i++) {
+            if(candidates[i].voteCount > winningVoteCount) {
+                winningVoteCount = candidates[i].voteCount;
+                winningIndex = i;
+            }
+        }
+        
+        return candidates[winningIndex].name;
+    }
 }
-'''
+```
 
 ## deployment 
 ![Screenshot 2025-05-19 135807](https://github.com/user-attachments/assets/fb174bc2-c637-48fe-a385-5baf9896aae4)
@@ -44,6 +65,7 @@ Write a contract that manages a list of student records (name, roll number). All
 
 
 ## Contract
+```
 pragma solidity ^0.8.0;
 
 contract StudentRecords {
@@ -61,7 +83,7 @@ contract StudentRecords {
         return (s.name, s.rollNo);
     }
 }
-
+```
 
 ## Deployment
 ![Screenshot 2025-05-19 140237](https://github.com/user-attachments/assets/25b00285-5f16-4f73-8c38-d4f69df174de)
@@ -74,6 +96,7 @@ Develop a contract that only allows the deployer (owner) to call a specific func
 
 
 ## Contract
+```
 pragma solidity ^0.8.0;
 
 contract OwnerOnly {
@@ -90,7 +113,7 @@ contract OwnerOnly {
         secret = _secret;
     }
 }
-
+```
 
 ## deployment 
 ![Screenshot 2025-05-19 140757](https://github.com/user-attachments/assets/82840f29-9b45-4abb-98d8-7c00789cebd2)
@@ -103,6 +126,7 @@ Write a contract where people can donate Ether and the top 3 donors are tracked.
 
 
 ## Contracts
+```
 pragma solidity ^0.8.0;
 
 contract Donations {
@@ -134,7 +158,7 @@ contract Donations {
         return topDonors;
     }
 }
-
+```
 
 ## deployment
 ![Screenshot 2025-05-19 141405](https://github.com/user-attachments/assets/df7540b8-c3f9-4d68-b65f-71d5a8259236)
@@ -147,6 +171,7 @@ Implement a simple auction system where users can place bids, and the highest bi
 
 
 ## Contracts
+```
 contract Auction {
     address public highestBidder;
     uint public highestBid;
@@ -172,7 +197,7 @@ contract Auction {
         payable(owner).transfer(highestBid);
     }
 }
-
+```
 
 ## deployment
 ![Screenshot 2025-05-19 141822](https://github.com/user-attachments/assets/3f1b7c67-9f4e-40c3-a367-501dbbf29455)
@@ -185,6 +210,7 @@ Create a contract that splits incoming Ether between 3 fixed addresses.
 
 
 ## Contracts
+```
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
@@ -204,7 +230,7 @@ contract EtherSplitter {
         addr3.transfer(msg.value - 2 * share); // to handle any remainder
     }
 }
-
+```
 
 ## deployment
 ![Screenshot 2025-05-19 142428](https://github.com/user-attachments/assets/4e104b21-6a8c-47b5-b217-8f0adcdd6954)
