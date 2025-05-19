@@ -6,51 +6,33 @@ Create a voting system with multiple candidates. Each address can vote only once
 
 ## Contract 
  ```
- // SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 contract VotingSystem {
-    struct Candidate {
-        string name;
-        uint voteCount;
-    }
-    
-    Candidate[] public candidates;
     mapping(address => bool) public hasVoted;
-    address public owner;
-    
-    constructor(string[] memory _candidateNames) {
-        owner = msg.sender;
-        for(uint i = 0; i < _candidateNames.length; i++) {
-            candidates.push(Candidate({
-                name: _candidateNames[i],
-                voteCount: 0
-            }));
-        }
+    mapping(string => uint) public votes;
+    string[] public candidates;
+
+    constructor(string[] memory _candidates) {
+        candidates = _candidates;
     }
-    
-    function vote(uint _candidateIndex) public {
-        require(!hasVoted[msg.sender], "You have already voted");
-        require(_candidateIndex < candidates.length, "Invalid candidate");
-        
-        candidates[_candidateIndex].voteCount++;
-        hasVoted[msg.sender] = true;
-    }
-    
-    function getWinner() public view returns (string memory) {
-        uint winningVoteCount = 0;
-        uint winningIndex = 0;
-        
-        for(uint i = 0; i < candidates.length; i++) {
-            if(candidates[i].voteCount > winningVoteCount) {
-                winningVoteCount = candidates[i].voteCount;
-                winningIndex = i;
+
+    function vote(string memory _candidate) public {
+        require(!hasVoted[msg.sender], "Already voted!");
+        bool valid = false;
+        for (uint i = 0; i < candidates.length; i++) {
+            if (keccak256(bytes(candidates[i])) == keccak256(bytes(_candidate))) {
+                valid = true;
+                break;
             }
         }
-        
-        return candidates[winningIndex].name;
+        require(valid, "Invalid candidate");
+        votes[_candidate]++;
+        hasVoted[msg.sender] = true;
     }
 }
+
 ```
 
 ## deployment 
@@ -66,6 +48,7 @@ Write a contract that manages a list of student records (name, roll number). All
 
 ## Contract
 ```
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 contract StudentRecords {
@@ -73,10 +56,13 @@ contract StudentRecords {
         string name;
         uint rollNo;
     }
+
     Student[] public students;
+
     function addStudent(string memory _name, uint _rollNo) public {
         students.push(Student(_name, _rollNo));
     }
+
     function getStudent(uint index) public view returns (string memory, uint) {
         require(index < students.length, "Invalid index");
         Student memory s = students[index];
@@ -97,22 +83,28 @@ Develop a contract that only allows the deployer (owner) to call a specific func
 
 ## Contract
 ```
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 contract OwnerOnly {
     address public owner;
+
     constructor() {
         owner = msg.sender;
     }
+
     modifier onlyOwner() {
         require(msg.sender == owner, "Not the owner");
         _;
     }
+
     string public secret;
+
     function setSecret(string memory _secret) public onlyOwner {
         secret = _secret;
     }
 }
+
 ```
 
 ## deployment 
@@ -127,6 +119,7 @@ Write a contract where people can donate Ether and the top 3 donors are tracked.
 
 ## Contracts
 ```
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 contract Donations {
@@ -134,11 +127,15 @@ contract Donations {
         address donor;
         uint amount;
     }
+
     Donor[] public topDonors;
+
     function donate() public payable {
         require(msg.value > 0, "Send some ether");
+
         Donor memory newDonor = Donor(msg.sender, msg.value);
         topDonors.push(newDonor);
+
         // Sort donors by amount (descending)
         for (uint i = 0; i < topDonors.length; i++) {
             for (uint j = i + 1; j < topDonors.length; j++) {
@@ -149,15 +146,18 @@ contract Donations {
                 }
             }
         }
-      // Keep only top 3 donors
+
+        // Keep only top 3 donors
         if (topDonors.length > 3) {
             topDonors.pop();
         }
     }
-     function getTopDonors() public view returns (Donor[] memory) {
+
+    function getTopDonors() public view returns (Donor[] memory) {
         return topDonors;
     }
 }
+
 ```
 
 ## deployment
@@ -172,31 +172,41 @@ Implement a simple auction system where users can place bids, and the highest bi
 
 ## Contracts
 ```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
 contract Auction {
     address public highestBidder;
     uint public highestBid;
     address public owner;
     bool public ended;
+
     constructor() {
         owner = msg.sender;
     }
+
     function bid() public payable {
         require(!ended, "Auction ended");
         require(msg.value > highestBid, "Bid too low");
+
         // Refund the previous highest bidder
         if (highestBid != 0) {
             payable(highestBidder).transfer(highestBid);
         }
+
         highestBidder = msg.sender;
         highestBid = msg.value;
     }
+
     function endAuction() public {
         require(msg.sender == owner, "Only owner can end the auction");
         require(!ended, "Auction already ended");
+
         ended = true;
         payable(owner).transfer(highestBid);
     }
 }
+
 ```
 
 ## deployment
@@ -218,11 +228,13 @@ contract EtherSplitter {
     address payable public addr1;
     address payable public addr2;
     address payable public addr3;
+
     constructor(address payable _addr1, address payable _addr2, address payable _addr3) {
         addr1 = _addr1;
         addr2 = _addr2;
         addr3 = _addr3;
     }
+
     receive() external payable {
         uint share = msg.value / 3;
         addr1.transfer(share);
@@ -230,6 +242,7 @@ contract EtherSplitter {
         addr3.transfer(msg.value - 2 * share); // to handle any remainder
     }
 }
+
 ```
 
 ## deployment
