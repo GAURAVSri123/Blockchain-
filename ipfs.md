@@ -10,7 +10,7 @@
 <B> IPFS file encrypted command </b>
 ![Image](https://github.com/user-attachments/assets/0a79052d-c704-4774-8c8c-3168eb4439e6) <br>
 
-<IPFS wsl/linux Commannd which help to open the ipfs </b> <br>
+## IPFS wsl/linux Commannd which help to open the ipfs 
 Installation of IPFS on local machine. Further, upload the files (such as photos, audio, and video) on IPFS and share it with other through content identifier (i.e., hash). Perform assessment using ubuntu WSL.
 Commands (IPFS)
 1.	Install the IPFS through WSL: wget https://dist.ipfs.tech/kubo/v0.32.1/kubo_v0.32.1_linux-amd64.tar.gz 
@@ -39,7 +39,7 @@ echo "File 2 content" > myfolder/file2.txt
 19.	in Browser you can directly run this to see the IPFS: https://ipfs.io/ipfs/QmWd9cavD8UGZQcqYBVhZqs2Jure5W9cgxR7S6TC4StfZe
 
 
-<b> ipfs file privacy and encryption commands </b> <br>
+## ipfs file privacy and encryption commands 
 Perform encryption and privacy on IPFS through command line.  
 IPFS privacy and encryption
 1.	echo "Hello, IPFS!" > myfile.txt
